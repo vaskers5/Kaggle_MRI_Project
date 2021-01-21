@@ -1,5 +1,11 @@
+import numpy as np
+from skimage import io, transform
+import torchvision
+import torch
+
+
 class My_set(Dataset):
-    def __init__(self,path,aug = False,Number = 0):
+    def __init__(self,path):
         self.path = path
         self.patients = [file for file in os.listdir(path)
                          if file not in ['data.csv','README.md']] #список пациентов
@@ -11,13 +17,8 @@ class My_set(Dataset):
                     self.masks.append(os.path.join(self.path,
                                                    patient,file))
                 else: 
-                    self.images.append(os.path.join(self.path,patient,file))
-        if aug:
-            for i in range(Number):
-                self.images.append(self.augmentation(self.images[i]))
-                self.masks.append(self.masks[i])
+                    self.images.append(os.path.join(self.path,patient,file)) 
           
-            
     def __len__(self):
         return len(self.images)
     
@@ -38,6 +39,8 @@ class My_set(Dataset):
         if aug:
             image  = self.augmentation(image)
             
+""""вся срань ниже нужна для преобразования картинок
+без этой хуйни ничего работать дальше не будет"""
 
         image = transform.resize(image,(256,256))
         image = image / 255
