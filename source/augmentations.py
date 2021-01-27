@@ -5,8 +5,6 @@ class Augmentations:
     def __init__(self,sample):
         self.image,self.mask = sample 
         
-        
-
     def rotate_image(self):
         image, segmentation = self.image, self.mask
         if random.random() > 0.5:
@@ -43,7 +41,7 @@ class Augmentations:
         image, segmentation = self.image, self.mask
         image = F.gaussian_blur(image,[1,3,2],[0.9,0.8])
         segmentation = F.gaussian_blur(segmentation,[1,3,2],[0.9,0.8])
-        
+        return image,segmentation 
     
     def transform(self):        
         trasformations = {'0':rotate_image,
@@ -54,7 +52,7 @@ class Augmentations:
                       '6':add_gamma,
                         }
         key = random.choice(list(transformations))
-        transformed_image = transofmations[key](self)
+        transformed_image = torch.Tensor([transofmations[key](self)])
         return transormed_image
         
         
