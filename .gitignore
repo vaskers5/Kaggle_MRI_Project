@@ -1,4 +1,4 @@
-.ipynb_checkpoints/
-PythonApplication1/
-/source/.ipynb_checkpoints/
-/source/.vs/
+.ipynb_checkpoints/**
+PythonApplication1/**
+/source/.ipynb_checkpoints/**
+/source/.vs/**
