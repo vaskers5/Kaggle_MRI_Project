@@ -16,6 +16,14 @@ class Snapshot(Dataset):
         image, mask = F.ToPILImage()(image),\
                       F.ToPILImage()(mask)
         return cls(image,mask)
+    
+    @classmethod
+    def tensor_4_to_snapshot(cls, tensor_4: torch.Tensor):
+        img_tensor = tensor_4[:3, :, :]
+        msk_tensor = tensor_4[-1, :, :]
+        img_pil = F.ToPILImage()(img_tensor)
+        msk_pil = F.ToPILImage()(msk_tensor)
+        return cls(img_pil, msk_pil)
         
     def get_img_pil(self) ->Image:
         return self.image
@@ -43,3 +51,10 @@ class Snapshot(Dataset):
         snapshot = torch.cat((image,mask),0)
         snapshot = F.ToPILImage()(snapshot)
         return snapshot
+    
+    def to_tensor_4(self) -> torch.Tensor:
+        image,mask = self.image,self.mask 
+        image = F.ToTensor()(image)
+        mask = F.ToTensor()(mask)
+        tensor4 = torch.cat((image,mask),0)
+        return tensor4
