@@ -1,7 +1,12 @@
-import PIL
 from PIL import Image
+from .snapshot import Snapshot
+from .augmentations import Augmentations
 
-class DataLoader:
+import torch
+from torch.utils.data import Dataset, DataLoader, random_split
+import os
+
+class MySet(Dataset):
     def __init__(self,path):
         self.path = path
         self.patients = [file for file in os.listdir(path)
@@ -23,7 +28,14 @@ class DataLoader:
     def __getitem__(self,index):
         image = self.images[index]
         mask = self.masks[index]
-        
         image = Image.open(image)
         mask = Image.open(mask)
+        snapshot = Snapshot(image,mask)
+        snapshot = snapshot.to_pil_4()
+        snapshot = Augmentations.transform(snapshot)
+        snapshot = Snapshot.pil_4_to_snapshot(snapshot)
+        image = snapshot.get_img_tensor()
+        mask = snapshot.get_mask_tensor()
+        
         return image,mask
+    

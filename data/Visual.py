@@ -1,9 +1,4 @@
-from .Data_Set import My_set
-import numpy as np
-import matplotlib.pyplot as plt
-from PIL import Image
-
-
+# converting tensor to image
 def image_convert(image):
     image = image.clone().cpu().numpy()
     image = image.transpose((1,2,0))
