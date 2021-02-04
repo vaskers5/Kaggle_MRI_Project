@@ -60,7 +60,7 @@ epochs = 25
 
 train_loss = []
 val_loss = []
-
+PATH = '/model_data'
 for epoch in range(epochs):
     print('Epoch {}/{}'.format(epoch + 1, epochs))
     start_time = time.time()
@@ -92,9 +92,8 @@ for epoch in range(epochs):
                     loss = criterion(pred_mask,mask)
                     running_val_loss.append(loss.item())
                     
-
                                     
-    
+    torch.save(model.state_dict(),PATH)
     epoch_train_loss = np.mean(running_train_loss) 
     print('Train loss: {}'.format(epoch_train_loss))                       
     train_loss.append(epoch_train_loss)
