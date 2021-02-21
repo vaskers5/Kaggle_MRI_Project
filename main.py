@@ -30,14 +30,21 @@ from skimage import io, transform
 import cv2
 import zipfile
 
-device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+import torch
+from math import sin
+import torchvision
 
+device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+from torch.utils.tensorboard import SummaryWriter
+writer = SummaryWriter("runs/MRI")
 
 random.seed(0)
 np.random.seed(0)
 torch.manual_seed(0)
 torch.cuda.manual_seed(0)
 torch.backends.cudnn.deterministic = True
+
+#https://www.youtube.com/watch?v=lIi69s8AaXA&feature=youtu.be
 
 data = pd.read_csv('Set/kaggle_3m/data.csv')
 data.head()
@@ -57,42 +64,53 @@ learning_rate = 1e-3
 optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
 epochs = 25
 
-
 train_loss = []
 val_loss = []
 PATH = '/model_data'
+iteration_val = 0
+iteration_train = 0
 for epoch in range(epochs):
     print('Epoch {}/{}'.format(epoch + 1, epochs))
-    start_time = time.time()
-     
+    start_time = time.time() 
 
     
     running_train_loss = []
     
     for image,mask in train_loader: 
+            iteration_train += 1
             image = image.to(device,dtype=torch.float)
             mask = mask.to(device,dtype=torch.float)
-            
             pred_mask = model.forward(image) # forward propogation
             loss = criterion(pred_mask,mask)
             optimizer.zero_grad() # setting gradient to zero
             loss.backward()
             optimizer.step()
             running_train_loss.append(loss.item())
-                              
+           
+            writer.add_scalar('Loss/train',loss.item(),iteration_train)
+            if iteration_train % 100==0:
+                writer.add_image('image/train',image[0],iteration_train)
+                writer.add_image('mask/train',mask[0],iteration_train)
+                writer.add_image('pred_mask/train',pred_mask[0],iteration_train)
 
-    else:           
+    else:
         running_val_loss = []
         
         with torch.no_grad():
             for image,mask in val_loader:
-                    image = image.to(device,dtype=torch.float)
-                    mask = mask.to(device,dtype=torch.float)                            
-                    pred_mask = model.forward(image)
-                    loss = criterion(pred_mask,mask)
-                    running_val_loss.append(loss.item())
-                    
-                                    
+                iteration_val+=1
+                image = image.to(device,dtype=torch.float)
+                mask = mask.to(device,dtype=torch.float)                            
+                pred_mask = model.forward(image)
+                loss = criterion(pred_mask,mask)
+                running_val_loss.append(loss.item())
+                
+                writer.add_scalar('Loss/val',loss.item(),iteration_val)
+                if iteration_val%100==0:
+                    writer.add_image('image/val',image[0],iteration_val)
+                    writer.add_image('mask/val',mask[0],iteration_val)
+                    writer.add_image('pred_mask/val',pred_mask[0],iteration_val)
+
     torch.save(model.state_dict(),PATH)
     epoch_train_loss = np.mean(running_train_loss) 
     print('Train loss: {}'.format(epoch_train_loss))                       

@@ -84,6 +84,5 @@ class Unet256(nn.Module):
         up3 = self.up3(up4,down3)
         up2 = self.up2(up3,down2)
         up1 = self.up1(up2,down1)
-        
         out = self.conv(up1)
         return out

@@ -43,7 +43,6 @@ class IoU(nn.Module):
         union = total - intersection 
         
         IoU = (intersection + smooth)/(union + smooth)
-                
         return IoU * 100
     
 class DiceScore(nn.Module):
