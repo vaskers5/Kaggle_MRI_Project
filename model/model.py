@@ -68,6 +68,7 @@ class Unet256(nn.Module):
         self.up2 = StackDecoder(24,24,12,kernel_size=(3,3))
         self.up1 = StackDecoder(12,12,12,kernel_size=(3,3))
         self.conv = Conv2d(12,1,kernel_size=(1,1),bias=True)
+        #self.out = torch.nn.Sigmoid()
         
     def forward(self,x):
         down1,out = self.down1(x)  
@@ -84,5 +85,6 @@ class Unet256(nn.Module):
         up3 = self.up3(up4,down3)
         up2 = self.up2(up3,down2)
         up1 = self.up1(up2,down1)
-        out = self.conv(up1)
-        return out
+        out_1 = self.conv(up1)
+      #  out_2 = self.out(out_1)
+        return out_1

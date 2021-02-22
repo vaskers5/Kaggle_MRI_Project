@@ -91,7 +91,7 @@ for epoch in range(epochs):
             if iteration_train % 100==0:
                 writer.add_image('image/train',image[0],iteration_train)
                 writer.add_image('mask/train',mask[0],iteration_train)
-                writer.add_image('pred_mask/train',pred_mask[0],iteration_train)
+                writer.add_image('pred_mask/train',torch.sigmoid(pred_mask[0]),iteration_train)
 
     else:
         running_val_loss = []
@@ -109,7 +109,7 @@ for epoch in range(epochs):
                 if iteration_val%100==0:
                     writer.add_image('image/val',image[0],iteration_val)
                     writer.add_image('mask/val',mask[0],iteration_val)
-                    writer.add_image('pred_mask/val',pred_mask[0],iteration_val)
+                    writer.add_image('pred_mask/val',torch.sigmoid(pred_mask[0]),iteration_val)
 
     torch.save(model.state_dict(),PATH)
     epoch_train_loss = np.mean(running_train_loss) 

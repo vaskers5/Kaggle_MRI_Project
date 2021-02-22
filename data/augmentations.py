@@ -43,11 +43,10 @@ class Augmentations:
         transformations = [
                       Augmentations.rotate_image,
                       Augmentations.h_flip,
-                      Augmentations.v_flip,
-                      Augmentations.add_contrast,
+                       Augmentations.v_flip
+#                       Augmentations.add_contrast,
 #                       Augmentations.add_blur,
-                      Augmentations.add_gamma
+#                       Augmentations.add_gamma
             ]
         transformed_image = random.choice(transformations)(image)
         return transformed_image
-   
